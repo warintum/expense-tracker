@@ -104,11 +104,10 @@ header h1 {
 .expense-card .card-amount { color: var(--danger-color); }
 .income-card .card-amount { color: var(--success-color); }
 
-
 /* Content Grid for Forms and History */
 .content-grid {
     display: grid;
-    grid-template-columns: 1fr 2fr; /* สัดส่วนฟอร์ม : ประวัติ */
+    grid-template-columns: 1fr 2fr;
     gap: 2rem;
 }
 
@@ -119,16 +118,6 @@ header h1 {
     box-shadow: var(--box-shadow);
     margin-bottom: 2rem;
     overflow: hidden;
-}
-
-.data-actions {
-    display: flex;
-    gap: 0.5rem;
-}
-
-.data-actions .btn {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
 }
 
 .card-header {
@@ -168,11 +157,6 @@ header h1 {
     border: 1px solid #ccc;
     font-family: 'Kanit', sans-serif;
     font-size: 0.9rem;
-}
-
-/* Utility Class */
-.hidden {
-    display: none;
 }
 
 .card-body {
@@ -231,7 +215,7 @@ input:focus, select:focus {
 .item-list {
     list-style: none;
     padding: 0;
-    margin-top: 1.2rem;
+    margin-top: 1.5rem;
 }
 
 .item-list li {
@@ -249,19 +233,19 @@ input:focus, select:focus {
     border: none;
     color: var(--danger-color);
     cursor: pointer;
-    font-size: 0.8rem;
+    font-size: 1.2rem;
     padding: 0.2rem;
 }
 
 /* Table */
 .table-wrapper {
-    overflow-x: auto; /* ทำให้ตารางเลื่อนได้ในมือถือ */
+    overflow-x: auto;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 600px; /* ป้องกันตารางย่อเกินไป */
+   /* min-width: 600px;*/
 }
 
 th, td {
@@ -287,7 +271,7 @@ tbody tr button {
     font-size: 1.2rem;
 }
 
-/* Buttons for edit, save, cancel */
+/* --- Edit Mode Styles --- */
 .edit-btn, .save-btn, .cancel-btn {
     background: none;
     border: none;
@@ -297,16 +281,11 @@ tbody tr button {
     margin-right: 0.2rem;
     transition: transform 0.1s;
 }
+.edit-btn:hover, .save-btn:hover, .cancel-btn:hover { transform: scale(1.2); }
+.edit-btn { color: var(--primary-color); }
+.save-btn { color: var(--success-color); }
+.cancel-btn { color: var(--danger-color); }
 
-.edit-btn:hover, .save-btn:hover, .cancel-btn:hover {
-    transform: scale(1.2);
-}
-
-.edit-btn { color: var(--primary-color); } /* Blue */
-.save-btn { color: var(--success-color); } /* Green */
-.cancel-btn { color: var(--danger-color); } /* Red */
-
-/* Form inputs inside table rows */
 .edit-form-input {
     width: 90%;
     padding: 0.5rem;
@@ -315,99 +294,71 @@ tbody tr button {
     font-family: 'Kanit', sans-serif;
     font-size: 0.9rem;
 }
+td .actions-cell { display: flex; align-items: center; justify-content: center; }
 
-/* Actions cell for edit/save/cancel buttons */
-td .actions-cell {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-/* Edit form for recurring items */
 .recurring-edit-form {
     display: flex;
     gap: 0.5rem;
     align-items: center;
     flex-wrap: wrap;
 }
-.recurring-edit-form input,
-.recurring-edit-form select {
+.recurring-edit-form input, .recurring-edit-form select {
     flex-grow: 1;
     padding: 0.5rem;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
 
-/* For Transaction Table */
-tr.income-row {
-    background-color: rgba(40, 167, 69, 0.1); /* Light green */
-    border-left: 4px solid var(--success-color);
+/* --- Row/Item Background Colors --- */
+tr.income-row { background-color: rgba(40, 167, 69, 0.1); border-left: 4px solid var(--success-color); }
+tr.expense-row { background-color: rgba(220, 53, 69, 0.1); border-left: 4px solid var(--danger-color); }
+li.income-item { background-color: rgba(40, 167, 69, 0.1); border-left: 4px solid var(--success-color); }
+li.expense-item { background-color: rgba(220, 53, 69, 0.1); border-left: 4px solid var(--danger-color); }
+
+/* Utility Class */
+.hidden {
+    display: none;
 }
 
-tr.expense-row {
-    background-color: rgba(220, 53, 69, 0.1); /* Light red */
-    border-left: 4px solid var(--danger-color);
-}
-
-/* For Recurring Item List */
-li.income-item {
-    background-color: rgba(40, 167, 69, 0.1); /* Light green */
-    border-left: 4px solid var(--success-color);
-}
-
-li.expense-item {
-    background-color: rgba(220, 53, 69, 0.1); /* Light red */
-    border-left: 4px solid var(--danger-color);
-}
-
-/* Ensure edit form inputs look good on colored backgrounds */
-tr.income-row .edit-form-input,
-li.income-item .recurring-edit-form input,
-li.income-item .recurring-edit-form select {
-    background-color: rgba(255, 255, 255, 0.7);
-}
-
-tr.expense-row .edit-form-input,
-li.expense-item .recurring-edit-form input,
-li.expense-item .recurring-edit-form select {
-    background-color: rgba(255, 255, 255, 0.7);
-}
-
-
-/* Responsive Design */
+/* --- Responsive Design --- */
 
 /* For Tablets and smaller desktops */
 @media (max-width: 992px) {
     .content-grid {
-        grid-template-columns: 1fr; /* ทำให้ฟอร์มและประวัติซ้อนกัน */
+        grid-template-columns: 1fr; /* ฟอร์มและประวัติซ้อนกัน */
+        gap: 1.5rem; /* ลดระยะห่าง */
     }
 }
 
 /* For Mobile phones */
 @media (max-width: 768px) {
+    /* ปรับ Container ให้กระชับขึ้น */
+    .container {
+        padding: 0 0.5rem 1rem 0.5rem;
+    }
+
     header h1 {
         font-size: 1.5rem;
     }
     
     .summary-section {
         grid-template-columns: 1fr; /* การ์ดสรุปซ้อนกัน */
+        gap: 1rem;
     }
 
+    /* ปรับ Card Header ให้เป็นคอลัมน์ */
     .card-header {
         flex-direction: column;
         align-items: stretch;
         gap: 1rem;
     }
-
     .header-actions {
         flex-direction: column;
         width: 100%;
     }
-
     .filter-controls {
-        flex-direction: column; /* ทำให้ Dropdown และ Date Picker ซ้อนกัน */
+        flex-direction: column;
     }
-    
     .data-actions {
         justify-content: stretch;
     }
@@ -415,20 +366,18 @@ li.expense-item .recurring-edit-form select {
         flex-grow: 1;
     }
 
-    /* --- ส่วนที่สำคัญที่สุด: การแปลงตารางเป็นการ์ด --- */
+    /* --- ส่วนที่สำคัญ: การแปลงตารางเป็นการ์ด --- */
     .table-wrapper thead {
-        display: none; /* ซ่อนหัวตารางเดิม */
+        display: none;
     }
-
     .table-wrapper table,
     .table-wrapper thead,
     .table-wrapper tbody,
     .table-wrapper th,
     .table-wrapper td,
     .table-wrapper tr {
-        display: block; /* ทำให้ทุกอย่างเป็นบล็อก */
+        display: block;
     }
-
     .table-wrapper thead tr {
         position: absolute;
         top: -9999px;
@@ -439,95 +388,87 @@ li.expense-item .recurring-edit-form select {
         border: 1px solid #ccc;
         border-radius: var(--border-radius);
         margin-bottom: 1rem;
-        padding: 1rem;
+        padding: 1rem; /* ลด padding ลง */
         background: var(--card-background);
         box-shadow: var(--box-shadow);
     }
-    
-    .table-wrapper tr.income-row {
-        border-left: 4px solid var(--success-color);
-    }
-    .table-wrapper tr.expense-row {
-        border-left: 4px solid var(--danger-color);
-    }
+    .table-wrapper tr.income-row { border-left: 4px solid var(--success-color); }
+    .table-wrapper tr.expense-row { border-left: 4px solid var(--danger-color); }
 
     .table-wrapper td {
         border: none;
         border-bottom: 1px solid #eee;
         position: relative;
-        padding-left: 40%; /* เว้นวรรคด้านซ้ายสำหรับ label */
+        padding-left: 35%; /* ปรับขนาดพื้นที่สำหรับ label */
         white-space: normal;
         text-align: left;
-        padding-top: 0.8rem;
-        padding-bottom: 0.8rem;
+        padding-top: 0.6rem; /* ลด padding แนวตั้ง */
+        padding-bottom: 0.6rem;
     }
-    
-    /* สร้าง label จาก data-label attribute */
     .table-wrapper td:before {
         content: attr(data-label) ": ";
         position: absolute;
-        top: 0.8rem;
+        top: 0.6rem;
         left: 1rem;
-        width: 35%;
+        width: 30%;
         padding-right: 10px;
         white-space: nowrap;
         text-align: left;
         font-weight: bold;
         color: var(--secondary-color);
     }
-
     .table-wrapper td:last-child {
         border-bottom: 0;
         text-align: center;
-        padding-left: 1rem; /* คืนค่า padding สำหรับปุ่ม */
+        padding-left: 1rem;
     }
-    .table-wrapper td:last-child:before {
-        content: "" !important; /* ซ่อน label ของคอลัมน์สุดท้าย */
+    .table-wrapper td:last-child:before { 
+        content: "" !important; 
     }
-    
-    .table-wrapper td .actions-cell {
-        justify-content: center;
+    .table-wrapper td .actions-cell { 
+        justify-content: center; 
     }
-}
-
-@media (max-width: 576px) {
-    header h1 {
-        font-size: 1.5rem;
-    }
-    
-    .summary-section {
-        grid-template-columns: 1fr; /* การ์ดสรุปซ้อนกัน */
-    }
-
-    .card-icon {
-        font-size: 2rem;
-    }
-    
-    .card-info .card-amount {
-        font-size: 1.5rem;
-    }
-    
-    .container {
-        padding: 0 0.5rem 1rem 0.5rem;
-    }
-    
-    .card-body {
-        padding: 1rem;
-    }
-
 }
 
 /* For very small mobile phones */
 @media (max-width: 480px) {
+    /* ปรับ Container ให้กระชับที่สุด */
     .container {
-        padding: 0 0.5rem 1rem 0.5rem;
+        padding: 0 0.25rem 0.5rem 0.25rem;
     }
     
     .card-body {
-        padding: 1rem;
+        padding: 0.75rem; /* ลด padding ในการ์ด */
     }
 
+    .summary-card {
+        padding: 1rem; /* ลด padding การ์ดสรุป */
+    }
+    .card-icon {
+        font-size: 2rem;
+        margin-right: 1rem;
+    }
+    .card-info .card-amount {
+        font-size: 1.5rem;
+    }
+
+    /* ปรับฟอร์มให้กระชับ */
+    input, select, button {
+        padding: 0.6rem 0.8rem;
+        font-size: 0.9rem;
+    }
+
+    /* ปรับการ์ดตารางให้กระชับ */
+    .table-wrapper tr {
+        padding: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
     .table-wrapper td {
-        padding-left: 45%; /* เพิ่มช่องว่างสำหรับหน้าจอเล็กมาก */
+        padding-left: 40%; /* เพิ่มช่องว่างสำหรับหน้าจอเล็กมาก */
+        padding-top: 0.5rem;
+        padding-bottom: 0.5rem;
+    }
+    .table-wrapper td:before {
+        top: 0.5rem;
     }
 }
