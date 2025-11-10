@@ -127,7 +127,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const originalIndex = transactions.findIndex(trans => trans.date === t.date && trans.category === t.category && trans.amount === t.amount);
             const row = document.createElement('tr');
 
-            // --- NEW: Add class based on transaction type ---
             if (t.type === 'income') {
                 row.classList.add('income-row');
             } else {
@@ -136,27 +135,27 @@ document.addEventListener('DOMContentLoaded', () => {
 
             if (editingIndex === originalIndex) {
                 row.innerHTML = `
-                    <td><input type="date" id="edit-date-${originalIndex}" class="edit-form-input" value="${t.date}"></td>
-                    <td>
+                    <td data-label="วันที่"><input type="date" id="edit-date-${originalIndex}" class="edit-form-input" value="${t.date}"></td>
+                    <td data-label="ประเภท">
                         <select id="edit-type-${originalIndex}" class="edit-form-input">
                             <option value="income" ${t.type === 'income' ? 'selected' : ''}>รายรับ</option>
                             <option value="expense" ${t.type === 'expense' ? 'selected' : ''}>รายจ่าย</option>
                         </select>
                     </td>
-                    <td><input type="text" id="edit-category-${originalIndex}" class="edit-form-input" value="${t.category}"></td>
-                    <td><input type="number" id="edit-amount-${originalIndex}" class="edit-form-input" value="${t.amount}" step="0.01"></td>
-                    <td class="actions-cell">
+                    <td data-label="หมวดหมู่"><input type="text" id="edit-category-${originalIndex}" class="edit-form-input" value="${t.category}"></td>
+                    <td data-label="จำนวนเงิน"><input type="number" id="edit-amount-${originalIndex}" class="edit-form-input" value="${t.amount}" step="0.01"></td>
+                    <td data-label="จัดการ" class="actions-cell">
                         <button class="save-btn" onclick="saveTransaction(${originalIndex})" title="บันทึก">💾</button>
                         <button class="cancel-btn" onclick="cancelEditTransaction()" title="ยกเลิก">❌</button>
                     </td>
                 `;
             } else {
                 row.innerHTML = `
-                    <td>${t.date}</td>
-                    <td>${t.type === 'income' ? 'รายรับ' : 'รายจ่าย'}</td>
-                    <td>${t.category}</td>
-                    <td>${t.amount.toFixed(2)}</td>
-                    <td class="actions-cell">
+                    <td data-label="วันที่">${t.date}</td>
+                    <td data-label="ประเภท">${t.type === 'income' ? 'รายรับ' : 'รายจ่าย'}</td>
+                    <td data-label="หมวดหมู่">${t.category}</td>
+                    <td data-label="จำนวนเงิน">${t.amount.toFixed(2)}</td>
+                    <td data-label="จัดการ" class="actions-cell">
                         <button class="edit-btn" onclick="editTransaction(${originalIndex})" title="แก้ไข">✏️</button>
                         <button class="delete-btn" onclick="deleteTransaction(${originalIndex})" title="ลบ">🗑️</button>
                     </td>

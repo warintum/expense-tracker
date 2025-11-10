@@ -375,30 +375,118 @@ li.expense-item .recurring-edit-form select {
 
 
 /* Responsive Design */
+
+/* For Tablets and smaller desktops */
 @media (max-width: 992px) {
     .content-grid {
         grid-template-columns: 1fr; /* ทำให้ฟอร์มและประวัติซ้อนกัน */
     }
 }
 
+/* For Mobile phones */
 @media (max-width: 768px) {
+    header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .summary-section {
+        grid-template-columns: 1fr; /* การ์ดสรุปซ้อนกัน */
+    }
+
     .card-header {
         flex-direction: column;
         align-items: stretch;
+        gap: 1rem;
     }
+
     .header-actions {
         flex-direction: column;
-        align-items: stretch;
         width: 100%;
     }
+
     .filter-controls {
-        justify-content: center;
+        flex-direction: column; /* ทำให้ Dropdown และ Date Picker ซ้อนกัน */
     }
+    
     .data-actions {
         justify-content: stretch;
     }
     .data-actions .btn {
         flex-grow: 1;
+    }
+
+    /* --- ส่วนที่สำคัญที่สุด: การแปลงตารางเป็นการ์ด --- */
+    .table-wrapper thead {
+        display: none; /* ซ่อนหัวตารางเดิม */
+    }
+
+    .table-wrapper table,
+    .table-wrapper thead,
+    .table-wrapper tbody,
+    .table-wrapper th,
+    .table-wrapper td,
+    .table-wrapper tr {
+        display: block; /* ทำให้ทุกอย่างเป็นบล็อก */
+    }
+
+    .table-wrapper thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+    }
+
+    .table-wrapper tr {
+        border: 1px solid #ccc;
+        border-radius: var(--border-radius);
+        margin-bottom: 1rem;
+        padding: 1rem;
+        background: var(--card-background);
+        box-shadow: var(--box-shadow);
+    }
+    
+    .table-wrapper tr.income-row {
+        border-left: 4px solid var(--success-color);
+    }
+    .table-wrapper tr.expense-row {
+        border-left: 4px solid var(--danger-color);
+    }
+
+    .table-wrapper td {
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 40%; /* เว้นวรรคด้านซ้ายสำหรับ label */
+        white-space: normal;
+        text-align: left;
+        padding-top: 0.8rem;
+        padding-bottom: 0.8rem;
+    }
+    
+    /* สร้าง label จาก data-label attribute */
+    .table-wrapper td:before {
+        content: attr(data-label) ": ";
+        position: absolute;
+        top: 0.8rem;
+        left: 1rem;
+        width: 35%;
+        padding-right: 10px;
+        white-space: nowrap;
+        text-align: left;
+        font-weight: bold;
+        color: var(--secondary-color);
+    }
+
+    .table-wrapper td:last-child {
+        border-bottom: 0;
+        text-align: center;
+        padding-left: 1rem; /* คืนค่า padding สำหรับปุ่ม */
+    }
+    .table-wrapper td:last-child:before {
+        content: "" !important; /* ซ่อน label ของคอลัมน์สุดท้าย */
+    }
+    
+    .table-wrapper td .actions-cell {
+        justify-content: center;
     }
 }
 
@@ -427,4 +515,19 @@ li.expense-item .recurring-edit-form select {
         padding: 1rem;
     }
 
+}
+
+/* For very small mobile phones */
+@media (max-width: 480px) {
+    .container {
+        padding: 0 0.5rem 1rem 0.5rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+
+    .table-wrapper td {
+        padding-left: 45%; /* เพิ่มช่องว่างสำหรับหน้าจอเล็กมาก */
+    }
 }
