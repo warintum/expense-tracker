@@ -1,0 +1,430 @@
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+    --background-color: #f0f2f5;
+    --card-background: #ffffff;
+    --text-color: #333;
+    --border-radius: 12px;
+    --box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+body {
+    font-family: 'Sarabun', 'Kanit', sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    margin: 0;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+header {
+    background-color: var(--card-background);
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    margin-bottom: 2rem;
+}
+
+header h1 {
+    margin: 0;
+    font-weight: 700;
+    color: var(--dark-color);
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem 2rem 1rem;
+}
+
+/* Notification */
+#notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 1rem 1.5rem;
+    background-color: var(--success-color);
+    color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    transform: translateX(400px);
+    transition: transform 0.3s ease-in-out;
+    z-index: 1000;
+}
+
+#notification.show {
+    transform: translateX(0);
+}
+
+/* Summary Section */
+.summary-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.summary-card {
+    background: var(--card-background);
+    border-radius: var(--border-radius);
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    box-shadow: var(--box-shadow);
+    transition: transform 0.2s;
+}
+
+.summary-card:hover {
+    transform: translateY(-5px);
+}
+
+.card-icon {
+    font-size: 2.5rem;
+    margin-right: 1.5rem;
+}
+
+.card-info .card-title {
+    margin: 0 0 0.5rem 0;
+    font-size: 0.9rem;
+    color: var(--secondary-color);
+    font-weight: 500;
+}
+
+.card-info .card-amount {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+}
+
+.balance-card .card-amount { color: var(--success-color); }
+.expense-card .card-amount { color: var(--danger-color); }
+.income-card .card-amount { color: var(--success-color); }
+
+
+/* Content Grid for Forms and History */
+.content-grid {
+    display: grid;
+    grid-template-columns: 1fr 2fr; /* สัดส่วนฟอร์ม : ประวัติ */
+    gap: 2rem;
+}
+
+/* Card Component */
+.card {
+    background: var(--card-background);
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    margin-bottom: 2rem;
+    overflow: hidden;
+}
+
+.data-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.data-actions .btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.card-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e0e0e0;
+    background-color: var(--light-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.card-header h3 {
+    margin: 0;
+    font-weight: 500;
+    color: var(--dark-color);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+/* Filter Controls */
+.filter-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+#filter-type, #filter-date, #filter-year {
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-family: 'Kanit', sans-serif;
+    font-size: 0.9rem;
+}
+
+/* Utility Class */
+.hidden {
+    display: none;
+}
+
+.card-body {
+    padding: 1.5rem;
+}
+
+/* Forms */
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+input, select, button {
+    padding: 0.8rem 1rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-family: 'Kanit', sans-serif;
+    font-size: 1rem;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.btn {
+    cursor: pointer;
+    font-weight: 500;
+    border: none;
+    transition: background-color 0.2s, transform 0.1s;
+}
+
+.btn:active {
+    transform: scale(0.98);
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+.btn-primary:hover {
+    background-color: #0056b3;
+}
+
+.btn-secondary {
+    background-color: var(--secondary-color);
+    color: white;
+}
+.btn-secondary:hover {
+    background-color: #5a6268;
+}
+
+/* Item List (for recurring items) */
+.item-list {
+    list-style: none;
+    padding: 0;
+    margin-top: 1.2rem;
+}
+
+.item-list li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.8rem 1rem;
+    background: var(--light-color);
+    border-radius: 8px;
+    margin-bottom: 0.5rem;
+}
+
+.item-list li button {
+    background: none;
+    border: none;
+    color: var(--danger-color);
+    cursor: pointer;
+    font-size: 0.8rem;
+    padding: 0.2rem;
+}
+
+/* Table */
+.table-wrapper {
+    overflow-x: auto; /* ทำให้ตารางเลื่อนได้ในมือถือ */
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 600px; /* ป้องกันตารางย่อเกินไป */
+}
+
+th, td {
+    padding: 0.8rem 1rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e0e0;
+}
+
+th {
+    background-color: var(--light-color);
+    font-weight: 500;
+}
+
+tbody tr:hover {
+    background-color: #f9f9f9;
+}
+
+tbody tr button {
+    background: none;
+    border: none;
+    color: var(--danger-color);
+    cursor: pointer;
+    font-size: 1.2rem;
+}
+
+/* Buttons for edit, save, cancel */
+.edit-btn, .save-btn, .cancel-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 0.2rem;
+    margin-right: 0.2rem;
+    transition: transform 0.1s;
+}
+
+.edit-btn:hover, .save-btn:hover, .cancel-btn:hover {
+    transform: scale(1.2);
+}
+
+.edit-btn { color: var(--primary-color); } /* Blue */
+.save-btn { color: var(--success-color); } /* Green */
+.cancel-btn { color: var(--danger-color); } /* Red */
+
+/* Form inputs inside table rows */
+.edit-form-input {
+    width: 90%;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-family: 'Kanit', sans-serif;
+    font-size: 0.9rem;
+}
+
+/* Actions cell for edit/save/cancel buttons */
+td .actions-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Edit form for recurring items */
+.recurring-edit-form {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    flex-wrap: wrap;
+}
+.recurring-edit-form input,
+.recurring-edit-form select {
+    flex-grow: 1;
+    padding: 0.5rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* For Transaction Table */
+tr.income-row {
+    background-color: rgba(40, 167, 69, 0.1); /* Light green */
+    border-left: 4px solid var(--success-color);
+}
+
+tr.expense-row {
+    background-color: rgba(220, 53, 69, 0.1); /* Light red */
+    border-left: 4px solid var(--danger-color);
+}
+
+/* For Recurring Item List */
+li.income-item {
+    background-color: rgba(40, 167, 69, 0.1); /* Light green */
+    border-left: 4px solid var(--success-color);
+}
+
+li.expense-item {
+    background-color: rgba(220, 53, 69, 0.1); /* Light red */
+    border-left: 4px solid var(--danger-color);
+}
+
+/* Ensure edit form inputs look good on colored backgrounds */
+tr.income-row .edit-form-input,
+li.income-item .recurring-edit-form input,
+li.income-item .recurring-edit-form select {
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+tr.expense-row .edit-form-input,
+li.expense-item .recurring-edit-form input,
+li.expense-item .recurring-edit-form select {
+    background-color: rgba(255, 255, 255, 0.7);
+}
+
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .content-grid {
+        grid-template-columns: 1fr; /* ทำให้ฟอร์มและประวัติซ้อนกัน */
+    }
+}
+
+@media (max-width: 768px) {
+    .card-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .header-actions {
+        flex-direction: column;
+        align-items: stretch;
+        width: 100%;
+    }
+    .filter-controls {
+        justify-content: center;
+    }
+    .data-actions {
+        justify-content: stretch;
+    }
+    .data-actions .btn {
+        flex-grow: 1;
+    }
+}
+
+@media (max-width: 576px) {
+    header h1 {
+        font-size: 1.5rem;
+    }
+    
+    .summary-section {
+        grid-template-columns: 1fr; /* การ์ดสรุปซ้อนกัน */
+    }
+
+    .card-icon {
+        font-size: 2rem;
+    }
+    
+    .card-info .card-amount {
+        font-size: 1.5rem;
+    }
+    
+    .container {
+        padding: 0 0.5rem 1rem 0.5rem;
+    }
+    
+    .card-body {
+        padding: 1rem;
+    }
+
+}

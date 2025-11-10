@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บันทึกรายรับ-รายจ่ายส่วนตัว</title>
+    <!-- Google Fonts: Kanit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <header>
+        <h1>💰 บันทึกรายรับ-รายจ่าย</h1>
+    </header>
+
+    <main class="container">
+        <!-- แถบแจ้งเตือน -->
+        <div id="notification"></div>
+
+        <!-- ส่วนสรุป -->
+        <section class="summary-section">
+            <div class="summary-card income-card">
+                <span class="card-icon">💵</span>
+                <div class="card-info">
+                    <p class="card-title">รายรับทั้งหมด</p>
+                    <p class="card-amount" id="total-income">0.00</p>
+                </div>
+            </div>
+            <div class="summary-card expense-card">
+                <span class="card-icon">💸</span>
+                <div class="card-info">
+                    <p class="card-title">รายจ่ายทั้งหมด</p>
+                    <p class="card-amount" id="total-expense">0.00</p>
+                </div>
+            </div>
+            <div class="summary-card balance-card">
+                <span class="card-icon">💰</span>
+                <div class="card-info">
+                    <p class="card-title">คงเหลือ</p>
+                    <p class="card-amount" id="balance">0.00</p>
+                </div>
+            </div>
+        </section>
+
+        <div class="content-grid">
+            <!-- ส่วนฟอร์ม -->
+            <section class="form-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>เพิ่มรายการใหม่</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="transaction-form">
+                            <input type="date" id="date" required>
+                            <select id="type" required>
+                                <option value="income">รายรับ</option>
+                                <option value="expense">รายจ่าย</option>
+                            </select>
+                            <input type="text" id="category" placeholder="หมวดหมู่ (เช่น อาหาร, เดินทาง)" required>
+                            <input type="number" id="amount" placeholder="จำนวนเงิน" step="10" required>
+                            <button type="submit" class="btn btn-primary">เพิ่มรายการ</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3>จัดการรายการคงที่ (รายเดือน)</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="recurring-form">
+                            <input type="text" id="rec-name" placeholder="ชื่อรายการ (เช่น ค่าเช่า, เงินเดือน)" required>
+                            <select id="rec-type" required>
+                                <option value="income">รายรับ</option>
+                                <option value="expense">รายจ่าย</option>
+                            </select>
+                            <input type="number" id="rec-amount" placeholder="จำนวนเงิน" step="10" required>
+                            <button type="submit" class="btn btn-secondary">เพิ่มรายการคงที่</button>
+                        </form>
+                        <ul id="recurring-list" class="item-list">
+                            <!-- รายการคงที่จะแสดงที่นี่ -->
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ส่วนประวัติ -->
+            <section class="history-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3>ประวัติรายการ</h3>
+                        <div class="header-actions">
+                            <div class="filter-controls">
+                                <select id="filter-type">
+                                    <option value="all">ทั้งหมด</option>
+                                    <option value="daily">รายวัน</option>
+                                    <option value="weekly">รายสัปดาห์</option>
+                                    <option value="monthly">รายเดือน</option>
+                                    <option value="yearly">รายปี</option>
+                                </select>
+                                <div id="date-picker-container">
+                                    <input type="date" id="filter-date" class="hidden">
+                                    <input type="number" id="filter-year" placeholder="ปี (ค.ศ.)" min="2000" max="2100" class="hidden">
+                                </div>
+                            </div>
+                            <div class="data-actions">
+                                <button id="export-btn" class="btn btn-secondary">📤 Export CSV</button>
+                                <button id="import-btn" class="btn btn-secondary">📥 Import CSV</button>
+                                <input type="file" id="csv-file" accept=".csv" style="display: none;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-wrapper">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>วันที่</th>
+                                        <th>ประเภท</th>
+                                        <th>หมวดหมู่</th>
+                                        <th>จำนวนเงิน</th>
+                                        <th>ลบ</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="transaction-list">
+                                    <!-- รายการจะแสดงที่นี่ -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
