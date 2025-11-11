@@ -10,13 +10,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const notificationEl = document.getElementById('notification');
     const exportBtn = document.getElementById('export-btn');
     const importBtn = document.getElementById('import-btn');
+    const clearDataBtn = document.getElementById('clear-data-btn'); // เพิ่มตัวแปรนี้
     const csvFileInput = document.getElementById('csv-file');
     
-    // NEW: Filter Elements
+    // Filter Elements
     const filterType = document.getElementById('filter-type');
     const filterDate = document.getElementById('filter-date');
     const filterYear = document.getElementById('filter-year');
-    const datePickerContainer = document.getElementById('date-picker-container');
+
+    // Modal Elements
+    const modal = document.getElementById('transaction-modal');
+    const fab = document.getElementById('add-transaction-fab');
+    const closeBtn = document.querySelector('.close-btn');
 
     // Data from localStorage
     let transactions = JSON.parse(localStorage.getItem('transactions')) || [];
@@ -26,7 +31,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let editingIndex = null;
     let editingRecurringIndex = null;
     
-    // NEW: State for filtering
+    // State for filtering
     let currentFilter = 'all';
 
     // --- Functions ---
@@ -37,83 +42,60 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const showNotification = (message, type = 'success') => {
         notificationEl.textContent = message;
-        notificationEl.style.backgroundColor = type === 'success' ? 'var(--success-color)' : 'var(--danger-color)';
+        notificationEl.style.backgroundColor = type === 'success' ? 'var(--income-color)' : 'var(--expense-color)';
         notificationEl.classList.add('show');
-        setTimeout(() => {
-            notificationEl.classList.remove('show');
-        }, 4000);
+        setTimeout(() => { notificationEl.classList.remove('show'); }, 4000);
     };
 
-    // NEW: Function to get filtered transactions
+    // --- NEW: Clear All Data Function ---
+    const clearAllData = () => {
+        const isConfirmed = confirm('คุณแน่ใจหรือไม่ว่าต้องการล้างข้อมูลทั้งหมด? การกระทำนี้ไม่สามารถย้อนกลับได้');
+        if (isConfirmed) {
+            localStorage.clear();
+            transactions = [];
+            recurringItems = [];
+            renderTransactions();
+            renderRecurring();
+            updateSummary();
+            showNotification('ล้างข้อมูลทั้งหมดสำเร็จ', 'danger');
+        }
+    };
+
+    // Modal Functions
+    const showModal = () => {
+        modal.style.display = 'block';
+        document.getElementById('date').valueAsDate = new Date();
+    };
+    const hideModal = () => {
+        modal.style.display = 'none';
+        transactionForm.reset();
+    };
+
     const getFilteredTransactions = () => {
         let filtered = [...transactions];
         const today = new Date();
-
         switch (currentFilter) {
-            case 'daily':
-                const selectedDate = filterDate.value;
-                if (selectedDate) {
-                    filtered = filtered.filter(t => t.date === selectedDate);
-                }
-                break;
-            case 'weekly':
-                const weekDate = filterDate.value ? new Date(filterDate.value) : today;
-                const startOfWeek = new Date(weekDate);
-                startOfWeek.setDate(weekDate.getDate() - weekDate.getDay()); // Sunday as start of week
-                const endOfWeek = new Date(startOfWeek);
-                endOfWeek.setDate(startOfWeek.getDate() + 6);
-                
-                filtered = filtered.filter(t => {
-                    const transactionDate = new Date(t.date);
-                    return transactionDate >= startOfWeek && transactionDate <= endOfWeek;
-                });
-                break;
-            case 'monthly':
-                const monthDate = filterDate.value ? new Date(filterDate.value) : today;
-                const year = monthDate.getFullYear();
-                const month = monthDate.getMonth(); // 0-11
-                
-                filtered = filtered.filter(t => {
-                    const transactionDate = new Date(t.date);
-                    return transactionDate.getFullYear() === year && transactionDate.getMonth() === month;
-                });
-                break;
-            case 'yearly':
-                const selectedYear = parseInt(filterYear.value);
-                if (!isNaN(selectedYear)) {
-                    filtered = filtered.filter(t => {
-                        const transactionDate = new Date(t.date);
-                        return transactionDate.getFullYear() === selectedYear;
-                    });
-                }
-                break;
+            case 'daily': const selectedDate = filterDate.value; if (selectedDate) { filtered = filtered.filter(t => t.date === selectedDate); } break;
+            case 'weekly': const weekDate = filterDate.value ? new Date(filterDate.value) : today; const startOfWeek = new Date(weekDate); startOfWeek.setDate(weekDate.getDate() - weekDate.getDay()); const endOfWeek = new Date(startOfWeek); endOfWeek.setDate(startOfWeek.getDate() + 6); filtered = filtered.filter(t => { const transactionDate = new Date(t.date); return transactionDate >= startOfWeek && transactionDate <= endOfWeek; }); break;
+            case 'monthly': const monthDate = filterDate.value ? new Date(filterDate.value) : today; const year = monthDate.getFullYear(); const month = monthDate.getMonth(); filtered = filtered.filter(t => { const transactionDate = new Date(t.date); return transactionDate.getFullYear() === year && transactionDate.getMonth() === month; }); break;
+            case 'yearly': const selectedYear = parseInt(filterYear.value); if (!isNaN(selectedYear)) { filtered = filtered.filter(t => { const transactionDate = new Date(t.date); return transactionDate.getFullYear() === selectedYear; }); } break;
         }
         return filtered;
     };
     
-    // MODIFIED: Update summary to use filtered data
     const updateSummary = () => {
         const transactionsToSummarize = getFilteredTransactions();
-        
         const income = transactionsToSummarize.reduce((total, t) => t.type === 'income' ? total + t.amount : total, 0);
         const expense = transactionsToSummarize.reduce((total, t) => t.type === 'expense' ? total + t.amount : total, 0);
-        
         const recurringIncome = recurringItems.reduce((total, r) => r.type === 'income' ? total + r.amount : total, 0);
         const recurringExpense = recurringItems.reduce((total, r) => r.type === 'expense' ? total + r.amount : total, 0);
-
         const totalIncome = income + recurringIncome;
         const totalExpense = expense + recurringExpense;
         const balance = totalIncome - totalExpense;
-
         totalIncomeEl.textContent = totalIncome.toFixed(2);
         totalExpenseEl.textContent = totalExpense.toFixed(2);
         balanceEl.textContent = balance.toFixed(2);
-        
-        if (balance < 0) {
-            balanceEl.style.color = 'var(--danger-color)';
-        } else {
-            balanceEl.style.color = 'var(--success-color)';
-        }
+        balanceEl.style.color = balance < 0 ? 'var(--expense-color)' : 'var(--income-color)';
     };
 
     const renderTransactions = () => {
@@ -126,12 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
         transactionsToRender.sort((a, b) => new Date(b.date) - new Date(a.date)).forEach((t, index) => {
             const originalIndex = transactions.findIndex(trans => trans.date === t.date && trans.category === t.category && trans.amount === t.amount);
             const row = document.createElement('tr');
-
-            if (t.type === 'income') {
-                row.classList.add('income-row');
-            } else {
-                row.classList.add('expense-row');
-            }
+            row.classList.add(t.type === 'income' ? 'income-row' : 'expense-row');
 
             if (editingIndex === originalIndex) {
                 row.innerHTML = `
@@ -167,20 +144,10 @@ document.addEventListener('DOMContentLoaded', () => {
     
     const renderRecurring = () => {
         recurringList.innerHTML = '';
-        if (recurringItems.length === 0) {
-            recurringList.innerHTML = '<li style="text-align:center; padding: 1rem;">ไม่มีรายการคงที่</li>';
-            return;
-        }
+        if (recurringItems.length === 0) { recurringList.innerHTML = '<li style="text-align:center; padding: 1rem;">ไม่มีรายการคงที่</li>'; return; }
         recurringItems.forEach((r, index) => {
             const li = document.createElement('li');
-
-            // --- NEW: Add class based on recurring item type ---
-            if (r.type === 'income') {
-                li.classList.add('income-item');
-            } else {
-                li.classList.add('expense-item');
-            }
-
+            li.classList.add(r.type === 'income' ? 'income-item' : 'expense-item');
             if (editingRecurringIndex === index) {
                 li.innerHTML = `
                     <form class="recurring-edit-form" onsubmit="saveRecurring(event, ${index})">
@@ -205,32 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             recurringList.appendChild(li);
         });
-    };
-
-    // NEW: Function to update filter UI visibility
-    const updateFilterUI = () => {
-        filterDate.classList.add('hidden');
-        filterYear.classList.add('hidden');
-
-        const today = new Date().toISOString().slice(0, 10);
-        const currentYear = new Date().getFullYear();
-
-        switch (currentFilter) {
-            case 'daily':
-            case 'weekly':
-            case 'monthly':
-                filterDate.classList.remove('hidden');
-                if (!filterDate.value) {
-                    filterDate.value = today;
-                }
-                break;
-            case 'yearly':
-                filterYear.classList.remove('hidden');
-                if (!filterYear.value) {
-                    filterYear.value = currentYear;
-                }
-                break;
-        }
     };
 
     // --- Edit Functions ---
@@ -278,34 +219,31 @@ document.addEventListener('DOMContentLoaded', () => {
         editingRecurringIndex = null;
         renderRecurring();
     };
-    
-    // --- CSV Export/Import Functions ---
+
+    const updateFilterUI = () => {
+        filterDate.classList.add('hidden'); filterYear.classList.add('hidden');
+        const today = new Date().toISOString().slice(0, 10); const currentYear = new Date().getFullYear();
+        switch (currentFilter) {
+            case 'daily': case 'weekly': case 'monthly': filterDate.classList.remove('hidden'); if (!filterDate.value) { filterDate.value = today; } break;
+            case 'yearly': filterYear.classList.remove('hidden'); if (!filterYear.value) { filterYear.value = currentYear; } break;
+        }
+    };
+
+    // --- CSV Export/Import (Functions remain the same) ---
     const exportToCSV = () => {
         const headers = ['RecordType', 'Date', 'Name', 'Category', 'Type', 'Amount'];
         let csvContent = headers.join(',') + '\n';
-        recurringItems.forEach(item => {
-            const row = ['Recurring', '', `"${item.name.replace(/"/g, '""')}"`, '', item.type, item.amount];
-            csvContent += row.join(',') + '\n';
-        });
-        transactions.forEach(t => {
-            const row = ['Transaction', t.date, '', `"${t.category.replace(/"/g, '""')}"`, t.type, t.amount];
-            csvContent += row.join(',') + '\n';
-        });
+        recurringItems.forEach(item => { const row = ['Recurring', '', `"${item.name.replace(/"/g, '""')}"`, '', item.type, item.amount]; csvContent += row.join(',') + '\n'; });
+        transactions.forEach(t => { const row = ['Transaction', t.date, '', `"${t.category.replace(/"/g, '""')}"`, t.type, t.amount]; csvContent += row.join(',') + '\n'; });
         const blob = new Blob(['\ufeff' + csvContent], { type: 'text/csv;charset=utf-8;' });
-        const link = document.createElement('a');
-        const url = URL.createObjectURL(blob);
-        link.setAttribute('href', url);
-        const today = new Date().toISOString().slice(0, 10);
-        link.setAttribute('download', `expense_data_${today}.csv`);
-        link.style.visibility = 'hidden';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+        const link = document.createElement('a'); const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url); const today = new Date().toISOString().slice(0, 10);
+        link.setAttribute('download', `expense_data_${today}.csv`); link.style.visibility = 'hidden';
+        document.body.appendChild(link); link.click(); document.body.removeChild(link);
         showNotification('ส่งออกข้อมูลเป็นไฟล์ CSV สำเร็จ!');
     };
     const importFromCSV = (event) => {
-        const file = event.target.files[0];
-        if (!file) return;
+        const file = event.target.files[0]; if (!file) return;
         const reader = new FileReader();
         reader.onload = function(e) {
             const text = e.target.result.replace(/^\ufeff/, '');
@@ -317,16 +255,10 @@ document.addEventListener('DOMContentLoaded', () => {
             const importedRecurring = []; const importedTransactions = [];
             for (let i = 1; i < lines.length; i++) {
                 const values = parseCSVRow(lines[i]);
-                if (values[0] === 'Recurring') {
-                    const item = { name: values[2], type: values[4], amount: parseFloat(values[5]) };
-                    if (item.name && !isNaN(item.amount)) { importedRecurring.push(item); }
-                } else if (values[0] === 'Transaction') {
-                    const transaction = { date: values[1], category: values[3], type: values[4], amount: parseFloat(values[5]) };
-                    if (transaction.date && transaction.category && !isNaN(transaction.amount)) { importedTransactions.push(transaction); }
-                }
+                if (values[0] === 'Recurring') { const item = { name: values[2], type: values[4], amount: parseFloat(values[5]) }; if (item.name && !isNaN(item.amount)) { importedRecurring.push(item); } }
+                else if (values[0] === 'Transaction') { const transaction = { date: values[1], category: values[3], type: values[4], amount: parseFloat(values[5]) }; if (transaction.date && transaction.category && !isNaN(transaction.amount)) { importedTransactions.push(transaction); } }
             }
-            recurringItems = [...recurringItems, ...importedRecurring];
-            transactions = [...transactions, ...importedTransactions];
+            recurringItems = [...recurringItems, ...importedRecurring]; transactions = [...transactions, ...importedTransactions];
             const uniqueTransactions = [...new Map(transactions.map(t => [`${t.date}-${t.category}-${t.amount}`, t])).values()];
             const uniqueRecurring = [...new Map(recurringItems.map(r => [`${r.name}-${r.amount}`, r])).values()];
             transactions = uniqueTransactions; recurringItems = uniqueRecurring;
@@ -350,17 +282,13 @@ document.addEventListener('DOMContentLoaded', () => {
         saveToLocalStorage();
         renderTransactions();
         updateSummary();
-        transactionForm.reset();
-        document.getElementById('date').valueAsDate = new Date();
+        hideModal();
         showNotification('เพิ่มรายการสำเร็จ!');
     });
+
     recurringForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const newItem = {
-            name: document.getElementById('rec-name').value,
-            type: document.getElementById('rec-type').value,
-            amount: parseFloat(document.getElementById('rec-amount').value)
-        };
+        const newItem = { name: document.getElementById('rec-name').value, type: document.getElementById('rec-type').value, amount: parseFloat(document.getElementById('rec-amount').value) };
         recurringItems.push(newItem);
         saveToLocalStorage();
         renderRecurring();
@@ -369,51 +297,25 @@ document.addEventListener('DOMContentLoaded', () => {
         showNotification('เพิ่มรายการคงที่สำเร็จ!');
     });
 
-    // NEW: Filter Event Listeners
-    filterType.addEventListener('change', (e) => {
-        currentFilter = e.target.value;
-        updateFilterUI();
-        renderTransactions();
-        updateSummary();
-    });
+    fab.addEventListener('click', showModal);
+    closeBtn.addEventListener('click', hideModal);
+    window.addEventListener('click', (event) => { if (event.target == modal) { hideModal(); } });
 
-    filterDate.addEventListener('change', () => {
-        renderTransactions();
-        updateSummary();
-    });
-
-    filterYear.addEventListener('change', () => {
-        renderTransactions();
-        updateSummary();
-    });
+    filterType.addEventListener('change', (e) => { currentFilter = e.target.value; updateFilterUI(); renderTransactions(); updateSummary(); });
+    filterDate.addEventListener('change', () => { renderTransactions(); updateSummary(); });
+    filterYear.addEventListener('change', () => { renderTransactions(); updateSummary(); });
 
     exportBtn.addEventListener('click', exportToCSV);
     importBtn.addEventListener('click', () => csvFileInput.click());
     csvFileInput.addEventListener('change', importFromCSV);
+    clearDataBtn.addEventListener('click', clearAllData);
 
     // --- Global Delete Functions ---
-    window.deleteTransaction = (index) => {
-        if (confirm('ต้องการลบรายการนี้ใช่หรือไม่?')) {
-            transactions.splice(index, 1);
-            saveToLocalStorage();
-            renderTransactions();
-            updateSummary();
-            showNotification('ลบรายการสำเร็จ', 'danger');
-        }
-    };
-    window.deleteRecurring = (index) => {
-        if (confirm('ต้องการลบรายการคงที่นี้ใช่หรือไม่?')) {
-            recurringItems.splice(index, 1);
-            saveToLocalStorage();
-            renderRecurring();
-            updateSummary();
-            showNotification('ลบรายการคงที่สำเร็จ', 'danger');
-        }
-    };
+    window.deleteTransaction = (index) => { if (confirm('ต้องการลบรายการนี้ใช่หรือไม่?')) { transactions.splice(index, 1); saveToLocalStorage(); renderTransactions(); updateSummary(); showNotification('ลบรายการสำเร็จ', 'danger'); } };
+    window.deleteRecurring = (index) => { if (confirm('ต้องการลบรายการคงที่นี้ใช่หรือไม่?')) { recurringItems.splice(index, 1); saveToLocalStorage(); renderRecurring(); updateSummary(); showNotification('ลบรายการคงที่สำเร็จ', 'danger'); } };
 
     // --- Initial Render ---
-    document.getElementById('date').valueAsDate = new Date();
-    updateFilterUI(); // Set initial filter UI state
+    updateFilterUI();
     renderTransactions();
     renderRecurring();
     updateSummary();
